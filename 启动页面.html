@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SheerID 验证器 - 启动页面</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .status.error {
+            border-left-color: #f44336;
+        }
+        
+        .status.warning {
+            border-left-color: #ff9800;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn.secondary {
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+        }
+        
+        .btn.danger {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+        }
+        
+        .steps {
+            text-align: left;
+            margin: 20px 0;
+        }
+        
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 现代化按钮样式 */
+        .btn-modern {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            min-width: 180px;
+            justify-content: center;
+        }
+
+        .btn-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-modern:hover::before {
+            left: 100%;
+        }
+
+        .btn-icon {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-text {
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .refresh-btn:hover .btn-icon {
+            transform: rotate(180deg);
+        }
+
+        .open-btn {
+            background: linear-gradient(135deg, #00b894 0%, #00a085 100%);
+            color: white;
+            box-shadow: 0 8px 32px rgba(0, 184, 148, 0.3);
+        }
+
+        .open-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 40px rgba(0, 184, 148, 0.4);
+        }
+
+        .open-btn:hover .btn-icon {
+            transform: scale(1.2);
+        }
+
+        .open-btn:disabled {
+            background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 0 4px 16px rgba(149, 165, 166, 0.2);
+        }
+
+        .open-btn:disabled::before {
+            display: none;
+        }
+
+        .open-btn:disabled .btn-icon {
+            transform: none;
+        }
+        
+        .url-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+        
+        .url-input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .url-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 SheerID 验证器</h1>
+        <p class="subtitle">一键启动 · 自动验证 · 简单易用</p>
+        
+        <div id="statusArea">
+            <div class="status" id="serverStatus">
+                <h3>📡 服务器状态</h3>
+                <p id="serverStatusText">正在检查服务器状态...</p>
+            </div>
+        </div>
+        
+        <div id="controlArea" style="display: flex; gap: 20px; justify-content: center; margin: 30px 0;">
+            <button class="btn-modern refresh-btn" onclick="checkServerStatus()" id="refreshBtn">
+                <span class="btn-icon">🔄</span>
+                <span class="btn-text">刷新状态</span>
+            </button>
+
+            <button class="btn-modern open-btn" onclick="openMainPage()" id="openPageBtn">
+                <span class="btn-icon">🌐</span>
+                <span class="btn-text">打开验证页面</span>
+            </button>
+        </div>
+        
+
+        
+        <div id="instructions" class="steps">
+            <h3>📋 使用说明</h3>
+            <div class="step">1️⃣ 确保服务器正在运行（运行 start.bat 或 node local-server.js）</div>
+            <div class="step">2️⃣ 点击"🔄 刷新状态"检查服务器状态</div>
+            <div class="step">3️⃣ 点击"🌐 打开验证页面"或直接粘贴链接快速验证</div>
+            <div class="step">4️⃣ 在验证页面中选择 Logan University 作为学校</div>
+            <div class="step">5️⃣ 开始验证并等待结果</div>
+        </div>
+    </div>
+
+    <script>
+        let serverProcess = null;
+        let serverRunning = false;
+        
+        // 页面加载时检查服务器状态
+        window.onload = function() {
+            // 延迟一点再检查，让页面完全加载
+            setTimeout(checkServerStatus, 500);
+        };
+        
+        // 检查服务器状态
+        async function checkServerStatus() {
+            console.log('🔍 开始检查服务器状态...');
+            console.log('📍 当前协议:', window.location.protocol);
+
+            try {
+                // 尝试检测多个端点
+                const endpoints = [
+                    'http://localhost:8787/health',
+                    'http://localhost:8787/api/verify',
+                    'http://localhost:8787/'
+                ];
+
+                for (const endpoint of endpoints) {
+                    try {
+                        console.log(`🔍 检查端点: ${endpoint}`);
+
+                        const response = await fetch(endpoint, {
+                            method: 'GET',
+                            mode: 'cors',  // 明确使用CORS模式
+                            credentials: 'omit',  // 不发送凭据
+                            signal: AbortSignal.timeout(5000)  // 增加超时时间
+                        });
+
+                        console.log(`📡 端点 ${endpoint} 响应状态: ${response.status}`);
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            console.log(`✅ 服务器检测成功，端点: ${endpoint}`, data);
+                            setServerStatus('running');
+                            return;
+                        }
+                    } catch (error) {
+                        console.log(`❌ 端点 ${endpoint} 检测失败:`, error.message);
+
+                        // 如果是网络错误但不是CORS错误，可能服务器没运行
+                        if (error.message.includes('Failed to fetch') && !error.message.includes('CORS')) {
+                            console.log('🔍 可能是服务器未运行');
+                        }
+                        continue;
+                    }
+                }
+
+                // 所有端点都失败，显示智能检测
+                console.log('⚠️ 所有自动检测失败，显示智能检测界面');
+                showSmartServerDetection();
+
+            } catch (error) {
+                console.log('❌ 服务器状态检查出错:', error);
+                showSmartServerDetection();
+            }
+        }
+
+        // 智能服务器检测
+        function showSmartServerDetection() {
+            // 如果自动检测失败，直接设置为未运行状态
+            setServerStatus('stopped');
+        }
+
+
+
+        // 使用图片请求测试服务器（绕过CORS限制）
+        async function testServerWithImage() {
+            return new Promise((resolve) => {
+                console.log('🖼️ 开始图片请求检测...');
+
+                const img = new Image();
+                const timeout = setTimeout(() => {
+                    console.log('⏰ 图片请求超时');
+                    resolve(false);
+                }, 3000);
+
+                img.onload = () => {
+                    console.log('✅ 图片加载成功 - 服务器运行中');
+                    clearTimeout(timeout);
+                    resolve(true);
+                };
+
+                img.onerror = (event) => {
+                    console.log('🔍 图片加载失败，但这通常意味着服务器在运行（返回了HTTP响应）');
+                    console.log('错误详情:', event);
+                    clearTimeout(timeout);
+                    // 即使图片加载失败，如果收到HTTP响应也说明服务器在运行
+                    resolve(true);
+                };
+
+                const testUrl = 'http://localhost:8787/health?' + Date.now();
+                console.log('🔍 图片请求URL:', testUrl);
+                img.src = testUrl;
+            });
+        }
+        
+        // 设置服务器状态
+        function setServerStatus(status) {
+            const statusDiv = document.getElementById('serverStatus');
+            const statusText = document.getElementById('serverStatusText');
+            const openPageBtn = document.getElementById('openPageBtn');
+            const quickStart = document.getElementById('quickStart');
+
+            if (status === 'running') {
+                statusDiv.className = 'status';
+                statusText.textContent = '✅ 服务器运行中';
+                if (openPageBtn) openPageBtn.disabled = false;
+                if (quickStart) quickStart.classList.remove('hidden');
+                serverRunning = true;
+            } else {
+                statusDiv.className = 'status error';
+                statusText.textContent = '❌ 服务器未运行';
+                if (openPageBtn) openPageBtn.disabled = true;
+                if (quickStart) quickStart.classList.add('hidden');
+                serverRunning = false;
+            }
+        }
+        
+
+        
+        // 打开主页面
+        function openMainPage() {
+            try {
+                console.log('🌐 尝试打开验证页面...');
+
+                // 检测当前是否为本地文件
+                const isLocalFile = window.location.protocol === 'file:';
+
+                if (isLocalFile) {
+                    console.log('📁 检测到本地文件，使用本地路径...');
+
+                    // 获取当前文件的目录路径
+                    const currentPath = window.location.href;
+                    const basePath = currentPath.substring(0, currentPath.lastIndexOf('/'));
+
+                    // 构建本地验证页面路径
+                    const localPageUrl = basePath + '/page-source/index.html';
+
+                    console.log('当前路径:', currentPath);
+                    console.log('基础路径:', basePath);
+                    console.log('验证页面路径:', localPageUrl);
+
+                    // 尝试打开本地验证页面
+                    const localWindow = window.open(localPageUrl, '_blank');
+
+                    if (localWindow) {
+                        console.log('✅ 验证页面已通过本地文件打开');
+                        setTimeout(() => {
+                            alert('🎉 验证页面已打开！\n\n注意：使用本地文件时，请确保服务器正在运行以获得完整功能。');
+                        }, 500);
+                        return;
+                    } else {
+                        console.log('❌ 无法打开新窗口，可能被浏览器阻止');
+
+                        // 提供选择
+                        const choice = confirm('无法自动打开验证页面。\n\n点击"确定"在当前窗口打开\n点击"取消"查看手动方法');
+
+                        if (choice) {
+                            window.location.href = localPageUrl;
+                        } else {
+                            showManualInstructions();
+                        }
+                        return;
+                    }
+                } else {
+                    // 通过HTTP服务器访问
+                    console.log('🌐 通过服务器访问...');
+                    const serverUrl = 'http://localhost:8787/page-source/index.html';
+
+                    const newWindow = window.open(serverUrl, '_blank');
+
+                    if (newWindow) {
+                        console.log('✅ 验证页面已通过服务器打开');
+                        setTimeout(() => {
+                            alert('🎉 验证页面已打开！');
+                        }, 500);
+                        return;
+                    } else {
+                        console.log('❌ 无法打开新窗口，可能被浏览器阻止');
+
+                        const choice = confirm('无法自动打开验证页面。\n\n点击"确定"在当前窗口打开\n点击"取消"查看手动方法');
+
+                        if (choice) {
+                            window.location.href = serverUrl;
+                        } else {
+                            showManualInstructions();
+                        }
+                        return;
+                    }
+                }
+
+            } catch (error) {
+                console.error('❌ 打开验证页面失败:', error);
+                showManualInstructions();
+            }
+        }
+
+        // 显示手动打开说明
+        function showManualInstructions() {
+            const isLocalFile = window.location.protocol === 'file:';
+
+            let instructions;
+            if (isLocalFile) {
+                instructions = `
+请手动打开验证页面：
+
+📁 方式1（本地文件）：
+在当前文件夹中找到并打开: page-source/index.html
+
+🌐 方式2（推荐 - 通过服务器）：
+1. 确保服务器正在运行（双击 start.bat）
+2. 访问: http://localhost:8787/page-source/index.html
+
+🏠 方式3：
+访问服务器主页: http://localhost:8787
+然后点击"打开验证页面"按钮
+                `;
+            } else {
+                instructions = `
+请手动打开验证页面：
+
+🌐 方式1（推荐）：
+直接访问: http://localhost:8787/page-source/index.html
+
+📁 方式2：
+打开项目文件夹中的 page-source/index.html 文件
+
+🏠 方式3：
+访问服务器主页: http://localhost:8787
+然后点击"打开验证页面"按钮
+                `;
+            }
+
+            alert(instructions);
+        }
+        
+
+        
+
+        
+
+
+        // 定期检查服务器状态
+        setInterval(checkServerStatus, 10000);
+    </script>
+</body>
+</html>
