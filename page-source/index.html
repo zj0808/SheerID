@@ -25,111 +25,131 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Segoe UI', 'SF Pro Text', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #1a1a2e;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f5f5f7;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            color: #e0e0e0;
+            color: #1d1d1f;
         }
 
         .header {
-            background: transparent;
-            padding: 35px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+            padding: 20px 40px;
             text-align: center;
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 21px;
             font-weight: 600;
-            color: #e0e0e0;
-            letter-spacing: -0.5px;
+            color: #1d1d1f;
+            letter-spacing: -0.3px;
         }
-        
+
         .language-selector {
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 50%;
+            right: 40px;
+            transform: translateY(-50%);
             display: flex;
-            gap: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px;
+            gap: 4px;
+            background: #e8e8ed;
+            padding: 3px;
             border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .lang-btn {
             padding: 6px 12px;
             background: transparent;
             border: none;
-            color: #a0a0a0;
-            font-size: 13px;
+            color: #86868b;
+            font-size: 12px;
+            font-weight: 500;
             cursor: pointer;
             border-radius: 6px;
             transition: all 0.2s;
         }
 
         .lang-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e0e0e0;
+            color: #1d1d1f;
         }
 
         .lang-btn.active {
-            background: #4a90d9;
-            color: #fff;
+            background: #fff;
+            color: #1d1d1f;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        
+
         .main-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            max-width: 1200px;
+            max-width: 680px;
             width: 100%;
             margin: 0 auto;
-            padding: 20px;
-            gap: 20px;
+            padding: 40px 20px;
+            gap: 24px;
         }
-        
+
         .input-section {
             background: #fff;
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
         }
-        
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            letter-spacing: -0.3px;
+        }
+
+        .section-subtitle {
+            font-size: 14px;
+            color: #86868b;
+            margin-bottom: 24px;
+        }
+
         .url-input-container {
             position: relative;
         }
-        
+
         .url-input {
             width: 100%;
-            padding: 16px 20px;
+            padding: 14px 18px;
             font-size: 15px;
-            border: 2px solid #e0e0e0;
+            border: 1px solid #d2d2d7;
             border-radius: 12px;
             transition: all 0.2s;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            background: #fafafa;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            background: #fff;
+            color: #1d1d1f;
         }
-        
+
         .url-input:focus {
             outline: none;
-            border-color: #666;
-            background: #fff;
+            border-color: #0071e3;
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
         }
-        
+
         .url-input::placeholder {
-            color: #999;
+            color: #86868b;
         }
-        
+
         .verify-button {
-            margin-top: 15px;
+            margin-top: 16px;
             width: 100%;
             padding: 14px;
-            background: #1a1a1a;
+            background: #0071e3;
             color: #fff;
             border: none;
             border-radius: 12px;
@@ -138,94 +158,101 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .verify-button:hover:not(:disabled) {
-            background: #333;
-            transform: translateY(-1px);
+            background: #0077ed;
         }
-        
+
+        .verify-button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
         .verify-button:disabled {
-            background: #ccc;
+            background: #d2d2d7;
             cursor: not-allowed;
         }
-        
+
         .advanced-toggle {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e0e0e0;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e8e8ed;
             text-align: center;
         }
-        
+
         .toggle-button {
             background: none;
             border: none;
-            color: #666;
+            color: #0071e3;
             font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: color 0.2s;
         }
-        
+
         .toggle-button:hover {
-            color: #1a1a1a;
+            color: #0077ed;
         }
-        
+
         .toggle-button svg {
             width: 16px;
             height: 16px;
             transition: transform 0.2s;
         }
-        
+
         .toggle-button.active svg {
             transform: rotate(180deg);
         }
-        
+
         .advanced-settings {
             display: none;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #f0f0f0;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid #e8e8ed;
         }
-        
+
         .advanced-settings.show {
             display: block;
         }
-        
+
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 16px;
         }
-        
+
         .form-group {
             display: flex;
             flex-direction: column;
         }
-        
+
         .form-group label {
-            font-size: 13px;
-            color: #666;
+            font-size: 12px;
+            color: #86868b;
             margin-bottom: 6px;
             font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        
+
         .form-group input,
         .form-group select {
-            padding: 10px 12px;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            background: #fafafa;
+            padding: 12px 14px;
+            border: 1px solid #d2d2d7;
+            border-radius: 10px;
+            font-size: 15px;
+            background: #fff;
+            color: #1d1d1f;
             transition: all 0.2s;
         }
-        
+
         .form-group input:focus,
         .form-group select:focus {
             outline: none;
-            border-color: #666;
-            background: #fff;
+            border-color: #0071e3;
+            box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.1);
         }
         
         /* 成功提示模态框样式 */
@@ -549,169 +576,180 @@
         }
         
         .console-section {
-            background: #1a1a1a;
-            border-radius: 12px;
+            background: #fff;
+            border-radius: 18px;
             padding: 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             overflow: hidden;
-            min-height: 300px;
+            min-height: 280px;
             display: flex;
             flex-direction: column;
         }
-        
+
         .console-header {
-            background: #2a2a2a;
-            padding: 12px 16px;
+            background: #f5f5f7;
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid #e8e8ed;
         }
-        
+
         .console-title {
             font-size: 13px;
-            color: #999;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            color: #86868b;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        
+
         .console-status {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #4cd964;
+            background: #30d158;
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        
+
         .console-actions {
             display: flex;
-            gap: 10px;
-        }
-        
-        .console-btn {
-            background: none;
-            border: none;
-            color: #666;
-            font-size: 12px;
-            cursor: pointer;
-            padding: 4px 8px;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        
-        .console-btn:hover {
-            color: #999;
-            background: #333;
-        }
-        
-        .console-body {
-            flex: 1;
-            padding: 16px;
-            overflow-y: auto;
-            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        
-        .console-line {
-            margin-bottom: 8px;
-            display: flex;
-            align-items: flex-start;
             gap: 8px;
         }
-        
+
+        .console-btn {
+            background: #e8e8ed;
+            border: none;
+            color: #86868b;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .console-btn:hover {
+            color: #1d1d1f;
+            background: #d2d2d7;
+        }
+
+        .console-body {
+            flex: 1;
+            padding: 16px 20px;
+            overflow-y: auto;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.8;
+            background: #fafafa;
+        }
+
+        .console-line {
+            margin-bottom: 4px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
         .console-time {
-            color: #666;
+            color: #86868b;
             flex-shrink: 0;
         }
-        
+
         .console-content {
             flex: 1;
             word-break: break-word;
         }
-        
-        .console-log { color: #999; }
-        .console-info { color: #5ac8fa; }
-        .console-success { color: #4cd964; }
-        .console-warning { color: #ffcc00; }
+
+        .console-log { color: #86868b; }
+        .console-info { color: #0071e3; }
+        .console-success { color: #30d158; }
+        .console-warning { color: #ff9f0a; }
         .console-error { color: #ff3b30; }
-        .console-debug { color: #8e8e93; }
-        
+        .console-debug { color: #af52de; }
+
         .loading-spinner {
             display: inline-block;
             width: 14px;
             height: 14px;
-            border: 2px solid #333;
-            border-top-color: transparent;
+            border: 2px solid #d2d2d7;
+            border-top-color: #0071e3;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-right: 8px;
             vertical-align: middle;
         }
-        
+
         .loading-spinner.white {
-            border-color: #fff;
-            border-top-color: transparent;
+            border-color: rgba(255,255,255,0.3);
+            border-top-color: #fff;
         }
-        
+
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        
+
         .footer {
-            background: #1a1a1a;
-            color: #999;
-            padding: 20px;
+            background: transparent;
+            color: #86868b;
+            padding: 30px 20px;
             text-align: center;
             margin-top: auto;
-            border-top: 1px solid #333;
+            font-size: 12px;
         }
-        
+
         .footer a {
-            color: #5ac8fa;
+            color: #0071e3;
             text-decoration: none;
             transition: color 0.2s;
         }
-        
+
         .footer a:hover {
-            color: #87ceeb;
             text-decoration: underline;
         }
-        
+
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 24px;
             flex-wrap: wrap;
-            margin-top: 10px;
+            margin-top: 8px;
         }
-        
+
         @media (max-width: 768px) {
             .form-grid {
                 grid-template-columns: 1fr;
             }
-            
+
             .main-container {
-                padding: 15px;
+                padding: 20px 16px;
             }
-            
+
+            .header {
+                padding: 16px 20px;
+            }
+
             .language-selector {
                 position: static;
-                margin-top: 10px;
+                transform: none;
+                margin-top: 12px;
                 justify-content: center;
+            }
+
+            .header h1 {
+                font-size: 18px;
             }
         }
     </style>
 </head>
 <body>
     <div class="header">
+        <h1>SheerID Student Verification</h1>
         <div class="language-selector">
             <button class="lang-btn active" onclick="setLanguage('zh-CN')">简体</button>
             <button class="lang-btn" onclick="setLanguage('zh-TW')">繁體</button>
@@ -720,17 +758,20 @@
             <button class="lang-btn" onclick="setLanguage('de')">Deutsch</button>
         </div>
     </div>
-    
+
     <div class="main-container">
         <div class="input-section">
+            <h2 class="section-title" data-i18n="title">学生身份验证</h2>
+            <p class="section-subtitle" data-i18n="subtitle">输入 SheerID 验证链接开始自动验证</p>
+
             <div class="url-input-container">
-                <input type="text" 
-                       id="urlInput" 
-                       class="url-input" 
-                       placeholder="https://services.sheerid.com/verify/67c8c14f5f17a83b745e3f82/?verificationId=689c96eexxxxxxxx"
+                <input type="text"
+                       id="urlInput"
+                       class="url-input"
+                       placeholder="https://services.sheerid.com/verify/..."
                        autocomplete="off">
             </div>
-            
+
             <button class="verify-button" id="verifyButton" onclick="startVerification()">
                 <span data-i18n="startVerify">开始验证</span>
             </button>
@@ -858,7 +899,8 @@
         // i18n 翻译配置
         const translations = {
             'zh-CN': {
-                title: 'SheerID 验证器',
+                title: '学生身份验证',
+                subtitle: '输入 SheerID 验证链接开始自动验证',
                 startVerify: '开始验证',
                 advancedSettings: '高级设置',
                 firstName: '名字',
@@ -894,7 +936,8 @@
                 verificationFailed: '❌ 验证失败: '
             },
             'zh-TW': {
-                title: 'SheerID 驗證器',
+                title: '學生身份驗證',
+                subtitle: '輸入 SheerID 驗證連結開始自動驗證',
                 startVerify: '開始驗證',
                 advancedSettings: '進階設定',
                 firstName: '名字',
@@ -930,7 +973,8 @@
                 verificationFailed: '❌ 驗證失敗: '
             },
             'en': {
-                title: 'SheerID Verifier',
+                title: 'Student Verification',
+                subtitle: 'Enter SheerID verification link to start automatic verification',
                 startVerify: 'Start Verification',
                 advancedSettings: 'Advanced Settings',
                 firstName: 'First Name',
@@ -966,7 +1010,8 @@
                 verificationFailed: '❌ Verification failed: '
             },
             'ja': {
-                title: 'SheerID 検証ツール',
+                title: '学生認証',
+                subtitle: 'SheerID 認証リンクを入力して自動認証を開始',
                 startVerify: '検証を開始',
                 advancedSettings: '詳細設定',
                 firstName: '名',
@@ -1002,7 +1047,8 @@
                 verificationFailed: '❌ 検証失敗: '
             },
             'de': {
-                title: 'SheerID Verifizierer',
+                title: 'Studentenverifizierung',
+                subtitle: 'SheerID-Verifizierungslink eingeben, um die automatische Verifizierung zu starten',
                 startVerify: 'Verifizierung starten',
                 advancedSettings: 'Erweiterte Einstellungen',
                 firstName: 'Vorname',

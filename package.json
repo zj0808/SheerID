@@ -4,7 +4,9 @@
   "description": "SheerID 学生身份验证服务",
   "main": "local-server.js",
   "scripts": {
-    "start": "node local-server.js"
+    "start": "node start.js",
+    "web": "node local-server.js",
+    "bot": "cd bot && python bot.py"
   },
   "engines": {
     "node": ">=18.0.0"
