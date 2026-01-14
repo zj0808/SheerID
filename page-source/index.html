@@ -783,6 +783,7 @@
                     <span data-i18n="console">控制台</span>
                 </div>
                 <div class="console-actions">
+                    <button class="console-btn" onclick="checkEmailForVerification()" style="background: #17a2b8;">📧 检查邮箱</button>
                     <button class="console-btn" onclick="clearConsole()" data-i18n="clear">清除</button>
                     <button class="console-btn" onclick="exportLogs()" data-i18n="export">导出</button>
                 </div>
@@ -1138,6 +1139,52 @@
             URL.revokeObjectURL(url);
             log('Logs exported', 'success');
         }
+
+        // 检查邮箱验证邮件
+        async function checkEmailForVerification() {
+            log('📧 正在检查邮箱中的SheerID验证邮件...', 'info');
+
+            try {
+                const response = await fetch(`${LOCAL_SERVER_URL}/api/check-email?since=30`);
+                const data = await response.json();
+
+                if (!data.success) {
+                    log(`❌ 邮箱检查失败: ${data.error}`, 'error');
+                    return;
+                }
+
+                if (!data.found || data.emails.length === 0) {
+                    log('📭 未发现SheerID验证邮件', 'warning');
+                    return;
+                }
+
+                log(`📬 发现 ${data.emails.length} 封SheerID相关邮件`, 'success');
+
+                for (const email of data.emails) {
+                    log(`  📩 主题: ${email.subject}`, 'info');
+                    log(`  📅 时间: ${new Date(email.date).toLocaleString()}`, 'debug');
+
+                    if (email.links && email.links.length > 0) {
+                        log(`  🔗 发现 ${email.links.length} 个链接:`, 'info');
+                        email.links.forEach((link, idx) => {
+                            log(`    [${idx + 1}] ${link}`, 'debug');
+                        });
+
+                        // 自动复制第一个验证链接
+                        const verifyLink = email.links[0];
+                        try {
+                            await navigator.clipboard.writeText(verifyLink);
+                            log(`  ✅ 已复制验证链接到剪贴板`, 'success');
+                        } catch (e) {
+                            log(`  ⚠️ 无法自动复制链接`, 'warning');
+                        }
+                    }
+                }
+
+            } catch (error) {
+                log(`❌ 邮箱检查错误: ${error.message}`, 'error');
+            }
+        }
         
         // 显示关于信息
         function showAbout() {
@@ -1230,16 +1277,9 @@
             }
         };
         
-        // 生成随机邮箱
+        // 生成邮箱（使用固定QQ邮箱）
         function generateEmail() {
-            const schoolId = document.getElementById('schoolId').value;
-            const school = schools[schoolId];
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let username = '';
-            for (let i = 0; i < 8; i++) {
-                username += chars[Math.floor(Math.random() * chars.length)];
-            }
-            return `${username}@${school.domain}`;
+            return '2430873348@qq.com';
         }
         
         // 生成随机生日

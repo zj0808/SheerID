@@ -2,13 +2,23 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
+const Imap = require('imap');
+const { simpleParser } = require('mailparser');
 
 const CONFIG = {
   PROGRAM_ID: '67c8c14f5f17a83b745e3f82',
   SHEERID_BASE_URL: 'https://services.sheerid.com',
   MY_SHEERID_URL: 'https://my.sheerid.com',
   MAX_FILE_SIZE: 1 * 1024 * 1024, // 1MB
-  PORT: process.env.PORT || 8787
+  PORT: process.env.PORT || 8787,
+  // QQ邮箱配置
+  EMAIL: {
+    user: '2430873348@qq.com',
+    password: 'eoowatzzmdpdebig',  // IMAP授权码
+    host: 'imap.qq.com',
+    port: 993,
+    tls: true
+  }
 };
 
 // CORS头 - 完全开放跨域访问
@@ -361,6 +371,111 @@ function parseMultipart(buffer, boundary) {
   return parts;
 }
 
+// 检查SheerID验证邮件
+function checkSheerIdEmail(sinceMinutes = 10) {
+  return new Promise((resolve, reject) => {
+    const imap = new Imap({
+      user: CONFIG.EMAIL.user,
+      password: CONFIG.EMAIL.password,
+      host: CONFIG.EMAIL.host,
+      port: CONFIG.EMAIL.port,
+      tls: CONFIG.EMAIL.tls,
+      tlsOptions: { rejectUnauthorized: false }
+    });
+
+    const results = [];
+
+    imap.once('ready', () => {
+      imap.openBox('INBOX', false, (err, box) => {
+        if (err) {
+          imap.end();
+          return reject(err);
+        }
+
+        // 搜索最近的邮件
+        const sinceDate = new Date();
+        sinceDate.setMinutes(sinceDate.getMinutes() - sinceMinutes);
+        const dateStr = sinceDate.toISOString().split('T')[0];
+
+        // 搜索来自SheerID的邮件
+        imap.search([['SINCE', dateStr], ['OR', ['FROM', 'sheerid'], ['FROM', 'SheerID']]], (err, uids) => {
+          if (err) {
+            imap.end();
+            return reject(err);
+          }
+
+          if (!uids || uids.length === 0) {
+            imap.end();
+            return resolve({ found: false, emails: [] });
+          }
+
+          const fetch = imap.fetch(uids, { bodies: '' });
+          let pending = uids.length;
+
+          fetch.on('message', (msg) => {
+            msg.on('body', (stream) => {
+              let buffer = '';
+              stream.on('data', (chunk) => {
+                buffer += chunk.toString('utf8');
+              });
+              stream.on('end', () => {
+                simpleParser(buffer, (err, parsed) => {
+                  if (!err && parsed) {
+                    // 提取验证链接
+                    const htmlContent = parsed.html || parsed.textAsHtml || '';
+                    const textContent = parsed.text || '';
+
+                    // 匹配SheerID验证链接
+                    const linkRegex = /https:\/\/[^\s"'<>]*sheerid[^\s"'<>]*/gi;
+                    const htmlLinks = htmlContent.match(linkRegex) || [];
+                    const textLinks = textContent.match(linkRegex) || [];
+                    const allLinks = [...new Set([...htmlLinks, ...textLinks])];
+
+                    // 过滤出验证链接
+                    const verifyLinks = allLinks.filter(link =>
+                      link.includes('verify') || link.includes('confirmation') || link.includes('click')
+                    );
+
+                    results.push({
+                      subject: parsed.subject,
+                      from: parsed.from?.text,
+                      date: parsed.date,
+                      links: verifyLinks.length > 0 ? verifyLinks : allLinks.slice(0, 3)
+                    });
+                  }
+                  pending--;
+                  if (pending === 0) {
+                    imap.end();
+                    resolve({ found: results.length > 0, emails: results });
+                  }
+                });
+              });
+            });
+          });
+
+          fetch.once('error', (err) => {
+            imap.end();
+            reject(err);
+          });
+
+          fetch.once('end', () => {
+            if (pending === 0) {
+              imap.end();
+              resolve({ found: results.length > 0, emails: results });
+            }
+          });
+        });
+      });
+    });
+
+    imap.once('error', (err) => {
+      reject(err);
+    });
+
+    imap.connect();
+  });
+}
+
 // 创建HTTP服务器
 const server = http.createServer(async (req, res) => {
   // 设置CORS头
@@ -471,6 +586,33 @@ const server = http.createServer(async (req, res) => {
       method: 'POST',
       timestamp: new Date().toISOString()
     }));
+    return;
+  }
+
+  // 检查邮箱验证邮件端点
+  if (req.method === 'GET' && (req.url === '/api/check-email' || req.url.startsWith('/api/check-email?'))) {
+    try {
+      const urlObj = new URL(req.url, `http://localhost:${CONFIG.PORT}`);
+      const sinceMinutes = parseInt(urlObj.searchParams.get('since') || '10', 10);
+
+      console.log(`📧 检查邮箱 (最近${sinceMinutes}分钟)...`);
+      const result = await checkSheerIdEmail(sinceMinutes);
+
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: true,
+        ...result,
+        timestamp: new Date().toISOString()
+      }));
+    } catch (error) {
+      console.error('邮箱检查错误:', error);
+      res.writeHead(500, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: false,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      }));
+    }
     return;
   }
 
