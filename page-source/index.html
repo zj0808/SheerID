@@ -9,7 +9,7 @@
     <script>
         // 配置（为空表示关闭该验证功能）
         window.CONFIG = {
-            workerUrl: "http://localhost:8787", // 本地服务器
+            workerUrl: "", // 留空则自动使用当前域名
             hcaptcha: {
                 sitekey: "" // 留空关闭hCaptcha
             },
@@ -1669,9 +1669,7 @@
                 
                 log('Sending request to server...', 'debug');
                 
-                const workerUrl = window.location.hostname === 'localhost' 
-                    ? 'http://localhost:8787' 
-                    : window.CONFIG.workerUrl;
+                const workerUrl = window.CONFIG.workerUrl || window.location.origin;
                 
                 const response = await fetch(`${workerUrl}/api/verify`, {
                     method: 'POST',
