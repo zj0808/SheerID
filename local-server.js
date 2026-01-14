@@ -47,6 +47,56 @@ function randomDelay(min = 1000, max = 3000) {
   return new Promise(resolve => setTimeout(resolve, delay));
 }
 
+// SheerID错误码映射
+const ERROR_MESSAGES = {
+  'noVerification': '验证ID不存在或已过期，请重新获取验证链接',
+  'invalidVerificationToken': '验证令牌无效',
+  'verificationExpired': '验证已过期，请重新开始',
+  'invalidPersonalInfo': '个人信息无效',
+  'docUploadFailed': '文档上传失败',
+  'invalidDocument': '文档无效或无法识别',
+  'underAge': '年龄不符合要求',
+  'notStudent': '无法验证学生身份',
+  'organizationNotFound': '学校未找到',
+  'tooManyAttempts': '尝试次数过多，请稍后再试',
+  'internalError': '服务器内部错误',
+  'rejected': '验证被拒绝'
+};
+
+// 解析SheerID错误响应，返回简洁中文提示
+function parseSheerIdError(data) {
+  if (!data) return '未知错误';
+
+  // 提取errorIds
+  const errorIds = data.errorIds || [];
+  const systemError = data.systemErrorMessage || '';
+
+  // 优先使用错误码映射
+  for (const errorId of errorIds) {
+    if (ERROR_MESSAGES[errorId]) {
+      return ERROR_MESSAGES[errorId];
+    }
+  }
+
+  // 如果有系统错误信息，提取关键部分
+  if (systemError) {
+    if (systemError.includes('No verification found')) {
+      return '验证ID不存在或已过期，请重新获取验证链接';
+    }
+    if (systemError.includes('expired')) {
+      return '验证已过期';
+    }
+    return systemError.substring(0, 100); // 截取前100字符
+  }
+
+  // 返回错误码列表
+  if (errorIds.length > 0) {
+    return `错误: ${errorIds.join(', ')}`;
+  }
+
+  return '验证失败，请重试';
+}
+
 // 获取fetch函数（支持不同Node.js版本）
 async function getFetch() {
   // Node.js 18+ 内置fetch
@@ -197,11 +247,12 @@ async function handleVerification(verificationId, firstName, lastName, email, bi
       `${CONFIG.SHEERID_BASE_URL}/rest/v2/verification/${verificationId}/step/collectStudentPersonalInfo`,
       step2Body
     );
-    
-    if (step2Response.status !== 200) {
-      throw new Error(`步骤2失败: ${JSON.stringify(step2Response.data)}`);
+
+    if (step2Response.status !== 200 || step2Response.data.currentStep === 'error') {
+      const errorMsg = parseSheerIdError(step2Response.data);
+      throw new Error(errorMsg);
     }
-    
+
     logs.push({ message: `步骤2完成: ${step2Response.data.currentStep}`, type: 'success' });
 
     // 添加随机延迟
@@ -245,11 +296,11 @@ async function handleVerification(verificationId, firstName, lastName, email, bi
     logs.push({ message: `文件大小: ${studentCardBuffer.length} bytes`, type: 'debug' });
 
     if (step4Response.status !== 200) {
-      throw new Error(`步骤4失败: 状态码${step4Response.status}, 响应: ${JSON.stringify(step4Response.data)}`);
+      const errorMsg = parseSheerIdError(step4Response.data);
+      throw new Error(`步骤4失败: ${errorMsg}`);
     }
 
     if (!step4Response.data.documents || !step4Response.data.documents[0]) {
-      logs.push({ message: `步骤4响应结构异常: ${JSON.stringify(step4Response.data)}`, type: 'error' });
       throw new Error('未获取到上传URL');
     }
     
@@ -492,75 +543,16 @@ const server = http.createServer(async (req, res) => {
 
   // 根路径 - 显示服务器信息
   if (req.method === 'GET' && req.url === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(`
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SheerID 验证服务器</title>
-    <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; background: #f5f5f5; }
-        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; }
-        .status { background: #d4edda; color: #155724; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .info { background: #e3f2fd; color: #0d47a1; padding: 15px; border-radius: 5px; margin: 20px 0; }
-        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin: 5px; text-decoration: none; display: inline-block; }
-        .btn:hover { background: #0056b3; }
-        .endpoint { background: #f8f9fa; padding: 10px; border-left: 4px solid #007bff; margin: 10px 0; }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>🚀 SheerID 验证服务器</h1>
-
-        <div class="status">
-            ✅ 服务器运行正常<br>
-            📍 地址: http://localhost:${CONFIG.PORT}<br>
-            ⏰ 启动时间: ${new Date().toLocaleString('zh-CN')}
-        </div>
-
-        <div class="info">
-            <h3>📋 使用说明</h3>
-            <p>1. 打开验证页面：<a href="javascript:void(0)" onclick="openVerificationPage()" class="btn">🌐 打开验证页面</a></p>
-            <p>2. 或者手动打开项目目录中的 <code>page-source/index.html</code> 文件</p>
-            <p>3. 在验证页面中粘贴 SheerID 验证链接开始验证</p>
-        </div>
-
-        <div class="info">
-            <h3>🔧 API 端点</h3>
-            <div class="endpoint">
-                <strong>GET /health</strong> - 健康检查<br>
-                <a href="/health" class="btn">测试健康检查</a>
-            </div>
-            <div class="endpoint">
-                <strong>GET /api/verify</strong> - API状态检查<br>
-                <a href="/api/verify" class="btn">测试API状态</a>
-            </div>
-            <div class="endpoint">
-                <strong>POST /api/verify</strong> - 验证接口<br>
-                用于处理 SheerID 验证请求
-            </div>
-        </div>
-
-        <div class="info">
-            <h3>💡 提示</h3>
-            <p>• 服务器正在监听端口 ${CONFIG.PORT}</p>
-            <p>• 支持跨域请求 (CORS)</p>
-            <p>• 按 Ctrl+C 停止服务器</p>
-        </div>
-    </div>
-
-    <script>
-        function openVerificationPage() {
-            // 直接打开验证页面
-            window.open('/page-source/index.html', '_blank');
-        }
-    </script>
-</body>
-</html>
-    `);
+    // 直接返回验证页面
+    const indexPath = path.join(__dirname, 'page-source', 'index.html');
+    try {
+      const content = fs.readFileSync(indexPath, 'utf-8');
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(content);
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      res.end('无法加载验证页面');
+    }
     return;
   }
 

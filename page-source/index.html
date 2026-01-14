@@ -28,24 +28,24 @@
         
         body {
             font-family: 'Segoe UI', 'SF Pro Text', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #450606;
+            background: #1a1a2e;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            color: #1a1a1a;
+            color: #e0e0e0;
         }
-        
+
         .header {
-            background: #fff0;
+            background: transparent;
             padding: 35px;
             text-align: center;
             position: relative;
         }
-        
+
         .header h1 {
             font-size: 24px;
             font-weight: 600;
-            color: #1a1a1a;
+            color: #e0e0e0;
             letter-spacing: -0.5px;
         }
         
@@ -55,29 +55,30 @@
             right: 20px;
             display: flex;
             gap: 5px;
-            background: #f0f0f0;
+            background: rgba(255, 255, 255, 0.1);
             padding: 5px;
             border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
-        
+
         .lang-btn {
             padding: 6px 12px;
             background: transparent;
             border: none;
-            color: #666;
+            color: #a0a0a0;
             font-size: 13px;
             cursor: pointer;
             border-radius: 6px;
             transition: all 0.2s;
         }
-        
+
         .lang-btn:hover {
-            background: #e0e0e0;
-            color: #333;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
         }
-        
+
         .lang-btn.active {
-            background: #1a1a1a;
+            background: #4a90d9;
             color: #fff;
         }
         
@@ -1078,13 +1079,13 @@
                 name: 'Logan University (Chesterfield, MO)',
                 idExtended: '331898',
                 domain: 'LOGAN.EDU',
-                logo: 'https://1key.me/assets/mit-logo.png'
+                logo: 'https://upload.wikimedia.org/wikipedia/commons/c/cc/Logan_University_logo_2019_-_color.svg'
             },
             '1953': {
                 name: 'Massachusetts Institute of Technology (Cambridge, MA)',
                 idExtended: '1953',
                 domain: 'MIT.EDU',
-                logo: 'https://1key.me/assets/mit-logo.png'
+                logo: 'https://upload.wikimedia.org/wikipedia/commons/0/0c/MIT_logo.svg'
             },
         };
         
@@ -1199,92 +1200,57 @@
             button.classList.toggle('active');
         }
         
-        // 名字生成器
+        // 名字生成器 - 使用真实常见的美国名字
         const nameGenerator = {
-            roots: {
-                prefixes: ['Al', 'Bri', 'Car', 'Dan', 'El', 'Fer', 'Gar', 'Har', 'Jes', 'Kar', 
-                        'Lar', 'Mar', 'Nor', 'Par', 'Quin', 'Ros', 'Sar', 'Tar', 'Val', 'Wil'],
-                middles: ['an', 'en', 'in', 'on', 'ar', 'er', 'or', 'ur', 'al', 'el', 
-                        'il', 'ol', 'am', 'em', 'im', 'om', 'ay', 'ey', 'oy', 'ian'],
-                suffixes: ['ton', 'son', 'man', 'ley', 'field', 'ford', 'wood', 'stone', 'worth', 'berg',
-                        'stein', 'bach', 'heim', 'gard', 'land', 'wick', 'shire', 'dale', 'brook', 'ridge'],
-                nameRoots: ['Alex', 'Bern', 'Crist', 'Dav', 'Edw', 'Fred', 'Greg', 'Henr', 'Ivan', 'John',
-                            'Ken', 'Leon', 'Mich', 'Nick', 'Oliv', 'Paul', 'Rich', 'Step', 'Thom', 'Will'],
-                nameEndings: ['a', 'e', 'i', 'o', 'y', 'ie', 'ey', 'an', 'en', 'in', 
-                            'on', 'er', 'ar', 'or', 'el', 'al', 'iel', 'ael', 'ine', 'lyn']
-            },
-            patterns: {
-                firstName: [
-                    ['prefix', 'ending'],
-                    ['nameRoot', 'ending'],
-                    ['prefix', 'middle', 'ending'],
-                    ['nameRoot', 'middle', 'ending']
-                ],
-                lastName: [
-                    ['prefix', 'suffix'],
-                    ['nameRoot', 'suffix'],
-                    ['prefix', 'middle', 'suffix'],
-                    ['compound']
-                ]
-            },
-            generateComponent(type, pattern) {
-                const components = [];
-                for (let part of pattern) {
-                    let component = '';
-                    switch(part) {
-                        case 'prefix':
-                            component = this.roots.prefixes[Math.floor(Math.random() * this.roots.prefixes.length)];
-                            break;
-                        case 'middle':
-                            component = this.roots.middles[Math.floor(Math.random() * this.roots.middles.length)];
-                            break;
-                        case 'suffix':
-                            component = this.roots.suffixes[Math.floor(Math.random() * this.roots.suffixes.length)];
-                            break;
-                        case 'nameRoot':
-                            component = this.roots.nameRoots[Math.floor(Math.random() * this.roots.nameRoots.length)];
-                            break;
-                        case 'ending':
-                            component = this.roots.nameEndings[Math.floor(Math.random() * this.roots.nameEndings.length)];
-                            break;
-                        case 'compound':
-                            const part1 = this.roots.prefixes[Math.floor(Math.random() * this.roots.prefixes.length)];
-                            const part2 = this.roots.suffixes[Math.floor(Math.random() * this.roots.suffixes.length)];
-                            component = part1 + part2;
-                            break;
-                    }
-                    components.push(component);
-                }
-                return components.join('');
-            },
-            formatName(name) {
-                return name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-            },
+            // 常见美国名字数据库
+            firstNames: [
+                'James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Charles',
+                'Christopher', 'Daniel', 'Matthew', 'Anthony', 'Mark', 'Donald', 'Steven', 'Paul', 'Andrew', 'Joshua',
+                'Kenneth', 'Kevin', 'Brian', 'George', 'Timothy', 'Ronald', 'Edward', 'Jason', 'Jeffrey', 'Ryan',
+                'Jacob', 'Gary', 'Nicholas', 'Eric', 'Jonathan', 'Stephen', 'Larry', 'Justin', 'Scott', 'Brandon',
+                'Benjamin', 'Samuel', 'Raymond', 'Gregory', 'Frank', 'Alexander', 'Patrick', 'Jack', 'Dennis', 'Jerry',
+                'Mary', 'Patricia', 'Jennifer', 'Linda', 'Barbara', 'Elizabeth', 'Susan', 'Jessica', 'Sarah', 'Karen',
+                'Lisa', 'Nancy', 'Betty', 'Margaret', 'Sandra', 'Ashley', 'Kimberly', 'Emily', 'Donna', 'Michelle',
+                'Dorothy', 'Carol', 'Amanda', 'Melissa', 'Deborah', 'Stephanie', 'Rebecca', 'Sharon', 'Laura', 'Cynthia',
+                'Kathleen', 'Amy', 'Angela', 'Shirley', 'Anna', 'Brenda', 'Pamela', 'Emma', 'Nicole', 'Helen',
+                'Samantha', 'Katherine', 'Christine', 'Debra', 'Rachel', 'Carolyn', 'Janet', 'Catherine', 'Maria', 'Heather',
+                'Ethan', 'Noah', 'Mason', 'Logan', 'Lucas', 'Oliver', 'Aiden', 'Elijah', 'Liam', 'Sebastian',
+                'Sophia', 'Olivia', 'Ava', 'Isabella', 'Mia', 'Charlotte', 'Amelia', 'Harper', 'Evelyn', 'Abigail'
+            ],
+            lastNames: [
+                'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+                'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
+                'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson',
+                'Walker', 'Young', 'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores',
+                'Green', 'Adams', 'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell', 'Carter', 'Roberts',
+                'Turner', 'Phillips', 'Evans', 'Parker', 'Edwards', 'Collins', 'Stewart', 'Morris', 'Murphy', 'Cook',
+                'Rogers', 'Morgan', 'Peterson', 'Cooper', 'Reed', 'Bailey', 'Bell', 'Gomez', 'Kelly', 'Howard',
+                'Ward', 'Cox', 'Diaz', 'Richardson', 'Wood', 'Watson', 'Brooks', 'Bennett', 'Gray', 'James',
+                'Reyes', 'Cruz', 'Hughes', 'Price', 'Myers', 'Long', 'Foster', 'Sanders', 'Ross', 'Morales',
+                'Powell', 'Sullivan', 'Russell', 'Ortiz', 'Jenkins', 'Gutierrez', 'Perry', 'Butler', 'Barnes', 'Fisher'
+            ],
             generate() {
-                const firstNamePattern = this.patterns.firstName[
-                    Math.floor(Math.random() * this.patterns.firstName.length)
-                ];
-                const lastNamePattern = this.patterns.lastName[
-                    Math.floor(Math.random() * this.patterns.lastName.length)
-                ];
-                const firstName = this.generateComponent('firstName', firstNamePattern);
-                const lastName = this.generateComponent('lastName', lastNamePattern);
+                const firstName = this.firstNames[Math.floor(Math.random() * this.firstNames.length)];
+                const lastName = this.lastNames[Math.floor(Math.random() * this.lastNames.length)];
                 return {
-                    firstName: this.formatName(firstName),
-                    lastName: this.formatName(lastName),
-                    fullName: `${this.formatName(firstName)} ${this.formatName(lastName)}`
+                    firstName,
+                    lastName,
+                    fullName: `${firstName} ${lastName}`
                 };
             }
         };
         
-        // 生成邮箱（使用固定QQ邮箱）
-        function generateEmail() {
-            return '2430873348@qq.com';
+        // 生成PSU假邮箱（格式: firstname.lastname123@psu.edu）
+        function generateEmail(firstName, lastName) {
+            const fn = (firstName || 'john').toLowerCase();
+            const ln = (lastName || 'doe').toLowerCase();
+            const digits = Math.floor(Math.random() * 9000) + 100; // 3-4位数字
+            return `${fn}.${ln}${digits}@psu.edu`;
         }
         
-        // 生成随机生日
+        // 生成随机生日 (1998-2004年出生，当前18-27岁的大学生)
         function generateBirthDate() {
-            const year = 2000 + Math.floor(Math.random() * 6);
+            const year = 1998 + Math.floor(Math.random() * 7);
             const month = String(Math.floor(Math.random() * 12) + 1).padStart(2, '0');
             const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, '0');
             return `${year}-${month}-${day}`;
@@ -1308,9 +1274,9 @@
             const name = nameGenerator.generate();
             document.getElementById('firstName').value = name.firstName;
             document.getElementById('lastName').value = name.lastName;
-            document.getElementById('email').value = generateEmail();
+            document.getElementById('email').value = generateEmail(name.firstName, name.lastName);
             document.getElementById('birthDate').value = generateBirthDate();
-            
+
             log(`Initialized with: ${name.firstName} ${name.lastName}`, 'debug');
         }
         
@@ -1342,85 +1308,170 @@
         }
         
         // 生成学生证
+        // 生成学号（带学校代码前缀）
+        function generateStudentId(schoolId) {
+            const prefixes = {
+                '331898': 'LU',  // Logan University
+                '1953': 'MIT'   // MIT
+            };
+            const prefix = prefixes[schoolId] || 'STU';
+            const year = new Date().getFullYear() - Math.floor(Math.random() * 3);
+            const seq = String(Math.floor(Math.random() * 99999) + 10000).padStart(5, '0');
+            return `${prefix}${year}${seq}`;
+        }
+
+        // 生成学生证 - 参考 idgenerator 设计
         async function generateCard(firstName, lastName) {
             log(t('generatingCard'), 'info');
-            
+
             const canvas = document.getElementById('studentCard');
             const ctx = canvas.getContext('2d');
-            
+            const schoolId = document.getElementById('schoolId').value;
+            const school = schools[schoolId];
+
             canvas.width = 856;
             canvas.height = 540;
-            
-            // 背景
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-            gradient.addColorStop(0, '#8B5A2B');
-            gradient.addColorStop(0.5, '#A0826D');
-            gradient.addColorStop(1, '#B98B73');
-            ctx.fillStyle = gradient;
+
+            // 深蓝色背景
+            ctx.fillStyle = '#0a1628';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // 木纹
-            ctx.strokeStyle = 'rgba(160, 110, 60, 0.3)';
-            ctx.lineWidth = 2;
-            for (let i = 0; i < canvas.height; i += Math.random() * 5 + 3) {
-                ctx.beginPath();
-                ctx.moveTo(0, i);
-                ctx.lineTo(canvas.width, i);
-                ctx.stroke();
-            }
-            
-            // 白色卡片
-            ctx.fillStyle = 'white';
-            roundRect(ctx, 20, 20, canvas.width - 40, canvas.height - 40, 15);
-            
-            // 标题
-            ctx.fillStyle = '#003278';
-            ctx.font = 'bold 48px Arial';
+
+            // 主卡片区域 - 深灰蓝渐变
+            const cardGradient = ctx.createLinearGradient(20, 20, canvas.width - 20, canvas.height - 20);
+            cardGradient.addColorStop(0, '#1a2942');
+            cardGradient.addColorStop(1, '#0d1a2d');
+            ctx.fillStyle = cardGradient;
+            roundRect(ctx, 20, 20, canvas.width - 40, canvas.height - 40, 16);
+
+            // 顶部装饰条 - 金色渐变
+            const headerGradient = ctx.createLinearGradient(20, 20, canvas.width - 20, 80);
+            headerGradient.addColorStop(0, '#c9a227');
+            headerGradient.addColorStop(0.5, '#f4d03f');
+            headerGradient.addColorStop(1, '#c9a227');
+            ctx.fillStyle = headerGradient;
+            ctx.beginPath();
+            ctx.moveTo(36, 20);
+            ctx.lineTo(canvas.width - 36, 20);
+            ctx.quadraticCurveTo(canvas.width - 20, 20, canvas.width - 20, 36);
+            ctx.lineTo(canvas.width - 20, 75);
+            ctx.lineTo(20, 75);
+            ctx.lineTo(20, 36);
+            ctx.quadraticCurveTo(20, 20, 36, 20);
+            ctx.fill();
+
+            // 学校名称 - 顶部
+            ctx.fillStyle = '#0a1628';
+            ctx.font = 'bold 28px "Segoe UI", Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('STUDENT CARD', canvas.width / 2, 80);
-            
-            // Logo
+            ctx.fillText(school.name.toUpperCase(), canvas.width / 2, 55);
+
+            // AUTHENTIC 标签
+            ctx.fillStyle = '#c9a227';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText('AUTHENTIC', 40, 100);
+
+            // 左侧信息区
+            const leftX = 50;
+            let infoY = 140;
+
+            // Student ID 标题
+            ctx.fillStyle = '#8b9dc3';
+            ctx.font = '14px Arial';
+            ctx.fillText('STUDENT IDENTIFICATION CARD', leftX, infoY);
+            infoY += 40;
+
+            // 姓名
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 32px "Segoe UI", Arial';
+            ctx.fillText(`${firstName} ${lastName}`, leftX, infoY);
+            infoY += 50;
+
+            // Student ID
+            ctx.fillStyle = '#8b9dc3';
+            ctx.font = '12px Arial';
+            ctx.fillText('STUDENT ID', leftX, infoY);
+            infoY += 20;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '18px Arial';
+            const studentId = generateStudentId(schoolId);
+            ctx.fillText(studentId, leftX, infoY);
+            infoY += 35;
+
+            // 学院
+            ctx.fillStyle = '#8b9dc3';
+            ctx.font = '12px Arial';
+            ctx.fillText('DEPARTMENT', leftX, infoY);
+            infoY += 20;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Arial';
+            const departments = ['Computer Science', 'Engineering', 'Business Administration', 'Mathematics', 'Physics'];
+            ctx.fillText(departments[Math.floor(Math.random() * departments.length)], leftX, infoY);
+            infoY += 35;
+
+            // 有效期
+            ctx.fillStyle = '#8b9dc3';
+            ctx.font = '12px Arial';
+            ctx.fillText('VALID THROUGH', leftX, infoY);
+            infoY += 20;
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '16px Arial';
+            const validYear = new Date().getFullYear() + 2;
+            ctx.fillText(`${validYear}/06/30`, leftX, infoY);
+
+            // 右侧 - Logo区域
             const logoUrl = getLogoUrl();
-            
+            const rightX = canvas.width - 250;
+
             try {
                 const logo = new Image();
                 logo.crossOrigin = 'anonymous';
-                
+
                 await new Promise((resolve, reject) => {
                     logo.onload = () => {
-                        const maxWidth = (canvas.width - 40) * 0.6;
-                        const maxHeight = (canvas.height - 40 - 120) * 0.6;
-                        const ratio = Math.min(maxWidth / logo.width, maxHeight / logo.height);
-                        const newWidth = logo.width * ratio;
-                        const newHeight = logo.height * ratio;
-                        const logoX = (canvas.width - newWidth) / 2;
-                        const logoY = 150;
-                        
-                        ctx.drawImage(logo, logoX, logoY, newWidth, newHeight);
-                        
-                        // 学生信息
-                        const infoY = logoY + newHeight + 40;
-                        ctx.fillStyle = 'black';
-                        ctx.font = 'bold 24px Arial';
-                        ctx.textAlign = 'center';
-                        ctx.fillText(`NAME: ${firstName} ${lastName}`, canvas.width / 2, infoY);
-                        ctx.fillText('VALID BEFORE: 2027/06', canvas.width / 2, infoY + 50);
-                        
+                        // Logo 圆形背景
+                        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                        ctx.beginPath();
+                        ctx.arc(rightX + 80, 220, 90, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        // 绘制 Logo
+                        const logoSize = 120;
+                        ctx.drawImage(logo, rightX + 20, 160, logoSize, logoSize);
                         resolve();
                     };
-                    logo.onerror = reject;
+                    logo.onerror = () => {
+                        // Logo加载失败时显示学校首字母
+                        ctx.fillStyle = 'rgba(255,255,255,0.1)';
+                        ctx.beginPath();
+                        ctx.arc(rightX + 80, 220, 90, 0, Math.PI * 2);
+                        ctx.fill();
+
+                        ctx.fillStyle = '#c9a227';
+                        ctx.font = 'bold 60px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(school.name.charAt(0), rightX + 80, 240);
+                        ctx.textAlign = 'left';
+                        resolve();
+                    };
                     logo.src = logoUrl;
                 });
-                
-                log(t('cardGenerated'), 'success');
             } catch (error) {
-                log(`Logo loading failed: ${error.message}`, 'warning');
-                ctx.fillStyle = 'black';
-                ctx.font = 'bold 32px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(`NAME: ${firstName} ${lastName}`, canvas.width / 2, 300);
-                ctx.fillText('VALID BEFORE: 2027/06', canvas.width / 2, 360);
+                log(`Logo: ${error.message}`, 'debug');
             }
+
+            // 底部条纹装饰
+            ctx.fillStyle = 'rgba(201, 162, 39, 0.3)';
+            ctx.fillRect(20, canvas.height - 70, canvas.width - 40, 2);
+
+            // 底部信息
+            ctx.fillStyle = '#5a6a7a';
+            ctx.font = '11px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('This card is property of the university. If found, please return to the registrar office.', canvas.width / 2, canvas.height - 45);
+            ctx.fillText(`Card issued: ${new Date().toLocaleDateString('en-US')} | ${school.domain}`, canvas.width / 2, canvas.height - 28);
+
+            log(t('cardGenerated'), 'success');
         }
         
         function roundRect(ctx, x, y, width, height, radius) {
@@ -1717,24 +1768,19 @@
                 });
                 
                 const result = await response.json();
-                
-                // 显示服务器返回的日志
-                if (result.logs && result.logs.length > 0) {
-                    log('=== Server Logs ===', 'info');
-                    result.logs.forEach(logItem => {
-                        log(logItem.message, logItem.type || 'debug');
-                    });
-                    log('=== End Server Logs ===', 'info');
-                }
-                
+
                 if (result.success) {
+                    // 成功时只显示关键步骤
+                    if (result.logs && result.logs.length > 0) {
+                        result.logs.filter(l => l.type === 'success' || l.type === 'info')
+                            .forEach(logItem => log(logItem.message, logItem.type));
+                    }
                     const redirectUrl = result.redirectUrl || 'https://one.google.com/ai-student';
                     log(t('verificationSuccess') + redirectUrl, 'success');
-                    
-                    // 显示成功提示
                     showSuccessModal(redirectUrl);
                 } else {
-                    log(t('verificationFailed') + result.message, 'error');
+                    // 失败时只显示简洁的错误信息
+                    log(`❌ ${result.message}`, 'error');
                 }
                 
                 // 重置验证码token
