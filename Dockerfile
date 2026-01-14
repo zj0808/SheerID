@@ -1,11 +1,13 @@
 # 基础镜像：Node.js + Python
 FROM node:20-slim
 
-# 安装 Python 和依赖
+# 安装 Python 和依赖（包括 pycairo 需要的 cairo 库）
 RUN apt-get update && apt-get install -y \
     python3 \
     python3-pip \
     python3-venv \
+    pkg-config \
+    libcairo2-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # 创建工作目录
