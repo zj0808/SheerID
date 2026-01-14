@@ -8,7 +8,7 @@ const CONFIG = {
   SHEERID_BASE_URL: 'https://services.sheerid.com',
   MY_SHEERID_URL: 'https://my.sheerid.com',
   MAX_FILE_SIZE: 1 * 1024 * 1024, // 1MB
-  PORT: 8787
+  PORT: process.env.PORT || 8787
 };
 
 // CORS头 - 完全开放跨域访问
